@@ -1,0 +1,9 @@
+# Deprecated workflow: Formspree sync abandoned
+#
+# This workflow previously polled a Formspree-like API every 5 minutes and
+# committed new submissions to attendees.csv. The project has migrated to a
+# Google Sheets + Apps Script approach for live RSVP collection, so this
+# workflow is intentionally disabled. Remove this file if you no longer need
+# the archived workflow.
+
+# Original workflow preserved in git history.
