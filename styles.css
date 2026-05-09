@@ -1,0 +1,35 @@
+:root{
+  --primary:#1a0100;
+  --secondary:#f72b51;
+  --bg:#f6f6f6;
+  --surface:#fff;
+  --muted:#e9e9e9;
+  --ui-font:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-lg:18px;
+  --radius-pill:50px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:var(--ui-font);color:#111;background:linear-gradient(180deg,#fff,#fafafa)}
+.container{max-width:920px;margin:28px auto;padding:16px}
+.site-header{border-bottom:1px solid #eee;padding:12px 0}
+.brand{font-weight:700;color:var(--primary);text-decoration:none}
+.event-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.event-card{background:var(--bg);border-radius:var(--radius-lg);padding:18px;box-shadow:0 10px 20px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:10px}
+.event-card .title{font-size:1.05rem;margin:0;font-weight:700}
+.event-card .meta{color:#666;font-size:.95rem}
+.event-card .desc{color:#333}
+.controls{margin-top:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:0;padding:.6em 1.1em;border-radius:var(--radius-pill);font-weight:700;cursor:pointer;color:#fff;background:var(--secondary);box-shadow:0 4px 10px rgba(0,0,0,0.08)}
+.btn--primary{background:var(--primary)}
+.btn--primary:hover{background:linear-gradient(270deg,#d148a6 14%,var(--secondary) 50%,#ffd3a8 86%)}
+.btn--secondary{background:#666}
+.rsvp-form label{display:block;margin-top:12px}
+.rsvp-form input[type="text"]{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;background:var(--surface)}
+.choices{display:flex;gap:12px;margin:8px 0}
+.choice{display:inline-flex;align-items:center;gap:8px}
+.hint{font-size:.9rem;color:#666}
+.status{margin-top:12px;font-weight:600}
+.attendees{margin-top:18px}
+.attendees ul{list-style:none;padding:0}
+.attendee{padding:8px;border-radius:10px;background:#fff;margin-bottom:8px;border:1px solid #eee}
+@media(max-width:640px){.container{padding:12px}.event-card{padding:14px}.btn{padding:.5em .9em}}
