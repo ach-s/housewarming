@@ -21,7 +21,8 @@
 
       <form id="rsvp-form" class="rsvp-form" novalidate>
         <label for="name">Your name</label>
-        <input id="name" name="name" type="text" required placeholder="First and last name" />
+        <input id="name" name="name" list="names-list" type="text" required placeholder="First and last name" autocomplete="name" />
+        <datalist id="names-list"></datalist>
 
         <p class="question">Can you come?</p>
         <div class="choices" role="radiogroup" aria-labelledby="event-title">
@@ -29,7 +30,7 @@
           <label class="choice"><input type="radio" name="answer" value="no"> No</label>
         </div>
 
-        <p class="hint">If your name is already on the list, start typing and we will load your previous response so you can change it.</p>
+        <p class="hint">Start typing to pick an existing guest (loads last response). You can update your response any time.</p>
 
         <div class="form-actions">
           <button type="submit" class="btn btn--primary">Save response</button>
