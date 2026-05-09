@@ -1,7 +1,19 @@
-// Minimal client for RSVP page
-// Configure FORM_ENDPOINT to a Formspree / Getform / Basin endpoint if you want serverless processing
-const FORM_ENDPOINT = ""; // e.g. "https://formspree.io/f/yourid" or "https://getform.io/f/yourid"
-const CSV_PATH = 'attendees.csv'; // repo-hosted CSV; editable by maintainers
+// Load config and event data, then run RSVP client
+const CSV_PATH = 'attendees.csv';
+const CONFIG_PATH = 'data/config.json';
+const EVENT_PATH = 'data/event.json';
+
+let config = { formEndpoint: '', address: '' };
+
+async function loadJSON(path){
+  try{
+    const res = await fetch(path);
+    if(!res.ok) throw new Error('not found');
+    return await res.json();
+  }catch(e){
+    return null;
+  }
+}
 
 async function fetchAttendees(){
   try{
@@ -47,6 +59,21 @@ function findByName(list,name){
 }
 
 async function init(){
+  // Load config and event data (config.json is generated at build from secrets)
+  const loadedConfig = await loadJSON(CONFIG_PATH);
+  if(loadedConfig) config = Object.assign(config, loadedConfig);
+
+  const event = (await loadJSON(EVENT_PATH)) || { title: 'Housewarming', date: '', description: '' };
+
+  // Update event UI
+  const titleEl = document.getElementById('event-title');
+  if(titleEl && event.title) titleEl.textContent = event.title;
+  const metaEl = document.querySelector('.event-detail .meta') || document.querySelector('.event-card .meta');
+  if(metaEl) metaEl.textContent = `${event.date || ''}${event.date && config.address ? ' — ' : ''}${config.address || ''}`.trim();
+  const descEl = document.querySelector('.event-detail .desc') || document.querySelector('.event-card .desc');
+  if(descEl && event.description) descEl.textContent = event.description;
+
+  // Existing attendee flow
   const attendees = await fetchAttendees();
   renderAttendees(attendees);
 
@@ -60,9 +87,9 @@ async function init(){
       if(found){
         const radios = document.querySelectorAll('input[name="answer"]');
         radios.forEach(r=> r.checked = (r.value === (found.answer||'').toLowerCase()));
-        status.textContent = `Loaded existing response for ${found.name}: ${found.answer}`;
+        if(status) status.textContent = `Loaded existing response for ${found.name}: ${found.answer}`;
       } else {
-        status.textContent='';
+        if(status) status.textContent='';
       }
     });
   }
@@ -73,26 +100,26 @@ async function init(){
       const formData = new FormData(form);
       const name = (formData.get('name')||'').toString().trim();
       const answer = (formData.get('answer')||'').toString();
-      if(!name){ status.textContent='Please provide your name.'; return }
-      status.textContent = 'Saving…';
+      if(!name){ if(status) status.textContent='Please provide your name.'; return }
+      if(status) status.textContent = 'Saving…';
 
-      // Attempt serverless submit if configured
-      if(FORM_ENDPOINT){
+      // Attempt serverless submit if configured at build time
+      if(config && config.formEndpoint){
         try{
           const payload = new URLSearchParams();
           payload.append('name', name);
           payload.append('answer', answer);
-          const res = await fetch(FORM_ENDPOINT, {method:'POST',body:payload,headers:{'Accept':'application/json'}});
+          const res = await fetch(config.formEndpoint, {method:'POST',body:payload,headers:{'Accept':'application/json'}});
           if(!res.ok) throw new Error('submit failed');
-          status.textContent = 'Saved (via form endpoint). Thank you!';
+          if(status) status.textContent = 'Saved (via form endpoint). Thank you!';
           setTimeout(async ()=>{ const list = await fetchAttendees(); renderAttendees(list); },1500);
           return;
         }catch(err){
           console.warn('submit failed',err);
-          status.textContent = 'Saved locally (preview). Submission endpoint not configured or failed.';
+          if(status) status.textContent = 'Saved locally (preview). Submission endpoint not configured or failed.';
         }
       } else {
-        status.innerHTML = 'No submit endpoint configured. To collect responses, set FORM_ENDPOINT in app.js to a Formspree/Getform/Basin endpoint. Alternatively, maintainers can add rows to attendees.csv manually.';
+        if(status) status.innerHTML = 'No submit endpoint configured. To collect responses, set FORM_ENDPOINT at build time via repository secrets so the site can generate data/config.json.';
       }
 
       attendees.push({name:name,answer:answer});
@@ -100,7 +127,7 @@ async function init(){
     });
 
     const cancel = document.getElementById('btn-cancel');
-    if(cancel) cancel.addEventListener('click',()=>{ form.reset(); document.getElementById('status').textContent=''; });
+    if(cancel) cancel.addEventListener('click',()=>{ form.reset(); const s = document.getElementById('status'); if(s) s.textContent=''; });
   }
 }
 
