@@ -1,38 +1,9 @@
-name: Sync Formspree submissions to attendees.csv
+# Deprecated workflow: Formspree sync abandoned
+#
+# This workflow previously polled a Formspree-like API every 5 minutes and
+# committed new submissions to attendees.csv. The project has migrated to a
+# Google Sheets + Apps Script approach for live RSVP collection, so this
+# workflow is intentionally disabled. Remove this file if you no longer need
+# the archived workflow.
 
-on:
-  schedule:
-    - cron: '*/5 * * * *'  # every 5 minutes
-  workflow_dispatch: {}
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install requests
-        run: python -m pip install --upgrade pip requests
-
-      - name: Sync submissions
-        env:
-          FORM_API_URL: ${{ secrets.FORM_API_URL }}
-          FORM_API_TOKEN: ${{ secrets.FORM_API_TOKEN }}
-        run: |
-          python scripts/sync_submissions.py
-
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add attendees.csv
-          git commit -m "chore: append Formspree submissions to attendees.csv\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>" || echo 'No changes to commit'
-          git push
+# Original workflow preserved in git history.
