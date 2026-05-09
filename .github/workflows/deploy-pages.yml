@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, feature/booking-components ]
+    branches: [ main, feature/booking-config ]
 
 jobs:
   build-and-deploy:
@@ -16,6 +16,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Build data config
+        run: |
+          mkdir -p data
+          cat > data/config.json <<JSON
+          {"formEndpoint":"${{ secrets.FORM_ENDPOINT }}","address":"${{ secrets.EVENT_ADDRESS }}"}
+          JSON
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -27,6 +34,7 @@ jobs:
   deploy:
     needs: build-and-deploy
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       pages: write
@@ -37,4 +45,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
