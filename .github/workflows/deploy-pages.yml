@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir -p data
           cat > data/config.json <<JSON
-          {"formEndpoint":"${{ secrets.FORM_ENDPOINT }}","address":"${{ secrets.EVENT_ADDRESS }}"}
+          {"supabaseUrl":"${{ secrets.SUPABASE_URL }}","supabaseAnonKey":"${{ secrets.SUPABASE_ANON_KEY }}","address":"${{ secrets.EVENT_ADDRESS }}"}
           JSON
 
       - name: Setup Pages
