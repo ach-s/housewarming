@@ -21,4 +21,4 @@ const ins = await fetch(`${url}/rest/v1/attendees`, {
 console.log('INSERT', ins.status, ins.ok ? 'ok' : await ins.text());
 
 if(!sel.ok || !ins.ok) process.exit(1);
-console.log('OK — delete the __smoke_test row from the Supabase dashboard when done.');
+console.log('OK - delete the __smoke_test row from the Supabase dashboard when done.');

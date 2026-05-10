@@ -65,7 +65,7 @@ function renderAttendees(list){
   list.forEach(a=>{
     const li = document.createElement('li'); li.className = 'attendee';
     const plus = a.plus_one ? ' (+1)' : '';
-    li.textContent = `${a.name || '—'} — ${a.answer || '—'}${plus}`;
+    li.textContent = `${a.name || '-'} - ${a.answer || '-'}${plus}`;
     ul.appendChild(li);
   });
   container.innerHTML = ''; container.appendChild(ul); updateNameDatalist();
@@ -77,14 +77,39 @@ function findByName(list, name){
   return list.find(a => (a.name||'').toLowerCase() === key) || null;
 }
 
+function formatEventDate(start){
+  if(!start) return null;
+  const d = new Date(start);
+  if(isNaN(d)) return null;
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const month = d.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+  const day = String(d.getDate());
+  const longDate = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  const shortDate = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  return { month, day, time, longLabel: `${longDate} - ${time}`, shortLabel: `${shortDate} · ${time}` };
+}
+
+function setText(id, value){ const el = document.getElementById(id); if(el && value != null) el.textContent = value; }
+
 async function init(){
   const loadedConfig = await loadJSON(CONFIG_PATH); if(loadedConfig) config = Object.assign(config, loadedConfig);
-  const event = (await loadJSON(EVENT_PATH)) || { title: 'Housewarming', date: '', description: '' };
-  const titleEl = document.getElementById('event-title'); if(titleEl && event.title) titleEl.textContent = event.title;
-  const metaEl = document.querySelector('.event-detail .meta') || document.querySelector('.event-card .meta');
-  if(metaEl) metaEl.textContent = `${event.date || ''}${event.date && config.address ? ' — ' : ''}${config.address || ''}`.trim();
-  const descEl = document.querySelector('.event-detail .desc') || document.querySelector('.event-card .desc');
+  const event = (await loadJSON(EVENT_PATH)) || { title: 'Housewarming', start: '', description: '' };
+  const fmt = formatEventDate(event.start);
+
+  // event.html
+  setText('event-title', event.title);
+  const metaEl = document.querySelector('.event-detail .meta');
+  if(metaEl){
+    const dateText = fmt ? fmt.longLabel : '';
+    metaEl.textContent = `${dateText}${dateText && config.address ? ' - ' : ''}${config.address || ''}`.trim();
+  }
+  const descEl = document.querySelector('.event-detail .desc');
   if(descEl && event.description) descEl.textContent = event.description;
+
+  // homepage
+  if(fmt){ setText('event-month', fmt.month); setText('event-day', fmt.day); setText('event-row-time', fmt.shortLabel); }
+  setText('event-row-title', event.title);
+  setText('event-row-subtitle', event.description);
 
   await fetchAttendees(); renderAttendees(attendees);
 

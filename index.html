@@ -3,26 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Housewarming — Events</title>
+  <title>Housewarming - Events</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container">
-      <h1 class="brand">Housewarming</h1>
+      <a href="/" class="brand-link" aria-label="Home">
+        <img src="assets/spong_logo.png" alt="Spond" class="brand-logo">
+      </a>
     </div>
   </header>
 
   <main class="container">
+    <div class="section-bar">Upcoming</div>
     <section class="event-list" aria-label="Events">
-      <article class="event-card" role="article">
-        <h2 class="title">Housewarming — Saturday 24 July</h2>
-        <p class="meta">Starts 6:00 PM — 123 Home Street</p>
-        <p class="desc">Come celebrate the new place! Food and drinks provided. Click to RSVP.</p>
-        <div class="controls">
-          <a class="btn btn--primary" href="event.html">View event</a>
+      <a class="event-row" href="event.html">
+        <div class="date-tile">
+          <span class="date-tile__month" id="event-month">JUL</span>
+          <span class="date-tile__day" id="event-day">24</span>
         </div>
-      </article>
+        <div class="event-row__info">
+          <h2 class="event-row__title" id="event-row-title">Housewarming</h2>
+          <p class="event-row__subtitle" id="event-row-subtitle">Drinks, snacks and a tour of the new place</p>
+        </div>
+        <div class="event-row__meta">
+          <span class="event-row__time" id="event-row-time">Sat, 24 Jul · 6:00 PM</span>
+          <span class="event-row__pill">View</span>
+        </div>
+      </a>
     </section>
   </main>
 
